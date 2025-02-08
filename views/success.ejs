@@ -1,0 +1,48 @@
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Prenotazione Confermata</title>
+                <link rel="stylesheet" href="/styles.css">
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            </head>
+            <body>
+                <header class="navbar">
+                  <a href="/" class="logo">
+                    <i class="fas fa-cut"></i>
+                    BarberApp
+                  </a>
+                </header>
+                <div class="container">
+                    <div class="success-card">
+                      <div class="checkmark">
+                        <i class="fas fa-check"></i>
+                      </div>
+                      <h1>Prenotazione Confermata!</h1>
+
+                      <div class="summary">
+                        <div class="summary-item">
+                          <i class="fas fa-user"></i>
+                          <span><%= appointment.operatorName %></span>
+                        </div>
+
+                        <div class="summary-item">
+                          <i class="fas fa-scissors"></i>
+                          <span><%= appointment.serviceName %></span>
+                        </div>
+
+                        <div class="summary-item">
+                          <i class="fas fa-clock"></i>
+                          <span><%= formatDate(appointment.startTime) %></span>
+                        </div>
+                      </div>
+
+                      <div class="actions">
+                        <a href="/book" class="btn">
+                          <i class="fas fa-plus"></i> Nuova Prenotazione
+                        </a>
+                      </div>
+                    </div>
+                </div>
+            </body>
+            </html>

@@ -1,0 +1,328 @@
+:root {
+  --primary-color: #2A2A2A;
+  --secondary-color: #FF6B6B;
+  --accent-color: #4ECDC4;
+  --light-bg: #F8F9FA;
+  --dark-text: #2A2A2A;
+  --light-text: #FFFFFF;
+  --slot-bg : #F5B5;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header */
+.navbar {
+  background: var(--primary-color);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar .logo {
+  color: var(--light-text);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: 40px;
+  margin-right: 10px;
+}
+
+/* Card */
+.booking-card {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin: 2rem 0;
+  transition: transform 0.3s ease;
+}
+
+.booking-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+/* Button */
+.btn {
+  background: var(--secondary-color);
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn:hover {
+  background: #FF5252;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+}
+
+.btn i {
+  margin-right: 8px;
+}
+
+/* Service Selection */
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.service-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-3px);
+}
+
+.service-card.selected {
+  border-color: var(--secondary-color);
+  background: #FFF5F5;
+}
+
+/* Calendar */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.time-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.time-slot {
+  background: var(--accent-color);
+  color: white;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.time-slot:hover {
+  background: #3BA89F;
+}
+
+/* Success Page */
+.success-card {
+  background: white;
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 3rem;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  background: var(--secondary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+}
+
+.checkmark i {
+  color: white;
+  font-size: 2.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Selezione servizi e operatori */
+.service-card, .operator-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  border: 2px solid #eee;
+}
+
+.service-card.selected, .operator-card.selected {
+  border-color: var(--secondary-color);
+  background: rgba(255, 107, 107, 0.05);
+  transform: translateY(-3px);
+}
+
+.service-card.selected::after, .operator-card.selected::after {
+  content: "✓";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
+/* Griglia operatori */
+.operator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.operator-card {
+  padding: 1.5rem;
+  text-align: center;
+  border-radius: 10px;
+}
+
+/* Orari disponibili */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.5rem;
+}
+
+.time-slot {
+  background: var(--slot-bg);
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-slot:hover {
+  background: var(--accent-color);
+  color: white;
+}
+
+.time-slot.selected {
+  background: var(--secondary-color);
+  color: white;
+  transform: scale(1.05);
+}
+/* Admin Dashboard */
+.admin-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.filters select, .filters input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.appointments-list {
+  margin-top: 2rem;
+}
+
+.appointment-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.appointment-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.appointment-info {
+  flex-grow: 1;
+}
+
+.info-item {
+  display: flex;
+  gap: 1rem;
+  margin: 5px 0;
+}
+
+.label {
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.btn-danger {
+  background: #ff4444;
+  margin-left: 1rem;
+}
+
+.btn-danger:hover {
+  background: #cc0000;
+}
