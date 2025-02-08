@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prenotazione</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+      <a href="/" class="logo">
+        <i class="fas fa-cut"></i>
+        BarberApp
+      </a>
+    </header>
+                  <div class="container">
+                    <div class="booking-card">
+                      <h1>Prenota il tuo appuntamento</h1>
+
+                      <form action="/book" method="POST">
+                        <!-- Selezione servizi -->
+                        <div class="form-group">
+                          <label><i class="fas fa-scissors"></i> Scegli il servizio</label>
+                          <div class="service-grid" id="serviceContainer">
+                            <% services.forEach(service => { %>
+                              <div class="service-card" 
+                                   data-service="<%= service.id %>"
+                                   onclick="selectService(this)">
+                                <h3><%= service.name %></h3>
+                                <p><i class="fas fa-clock"></i> <%= service.duration %> min</p>
+                                <input type="radio" 
+                                       name="serviceId" 
+                                       value="<%= service.id %>" 
+                                       hidden
+                                       required>
+                              </div>
+                            <% }); %>
+                          </div>
+                        </div>
+
+                        <!-- Selezione operatore -->
+                        <div class="form-group">
+                          <label><i class="fas fa-user"></i> Scegli l'operatore</label>
+                          <div class="operator-grid">
+                            <% operators.forEach(operator => { %>
+                              <div class="operator-card" 
+                                   data-operator="<%= operator.id %>"
+                                   onclick="selectOperator(this)">
+                                <i class="fas fa-cut"></i>
+                                <h4><%= operator.name %></h4>
+                                <input type="radio" 
+                                       name="operatorId" 
+                                       value="<%= operator.id %>" 
+                                       hidden
+                                       required>
+                              </div>
+                            <% }); %>
+                          </div>
+                        </div>
+
+                        <!-- Selezione data e orario -->
+                        <div class="form-group">
+                          <label><i class="fas fa-calendar-alt"></i> Seleziona data</label>
+                          <input type="date" 
+                                 id="dateSelect" 
+                                 min="<%= new Date().toISOString().split('T')[0] %>" 
+                                 required>
+                        </div>
+
+                        <div class="form-group">
+                          <label><i class="fas fa-clock"></i> Orario disponibile</label>
+                          <div class="time-grid" id="timeContainer"></div>
+                        </div>
+
+                        <button type="submit" class="btn">
+                          <i class="fas fa-check"></i> Conferma prenotazione
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+
+                  <script>
+                  // Selezione servizio
+                  function selectService(element) {
+                    document.querySelectorAll('#serviceContainer .service-card').forEach(card => {
+                      card.classList.remove('selected');
+                    });
+                    element.classList.add('selected');
+                    element.querySelector('input[type="radio"]').checked = true;
+                  }
+
+                  // Selezione operatore
+                  function selectOperator(element) {
+                    document.querySelectorAll('.operator-card').forEach(card => {
+                      card.classList.remove('selected');
+                    });
+                    element.classList.add('selected');
+                    element.querySelector('input[type="radio"]').checked = true;
+                  }
+
+                  // Caricamento orari disponibili
+                  async function updateAvailableTimes() {
+                    const operatorId = document.querySelector('input[name="operatorId"]:checked')?.value;
+                    const serviceId = document.querySelector('input[name="serviceId"]:checked')?.value;
+                    const date = document.getElementById('dateSelect').value;
+
+                    if (!operatorId || !serviceId || !date) return;
+
+                    const response = await fetch(`/api/available-slots?operatorId=${operatorId}&date=${date}&serviceId=${serviceId}`);
+                    const slots = await response.json();
+
+                    const timeContainer = document.getElementById('timeContainer');
+                    timeContainer.innerHTML = slots.map(slot => `
+                      <div class="time-slot" onclick="selectTime(this)">
+                        <input type="radio" 
+                               name="dateTime" 
+                               value="${slot}" 
+                               hidden
+                               required>
+                        ${new Date(slot).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                      </div>
+                    `).join('');
+                  }
+
+                  // Selezione orario
+                  function selectTime(element) {
+                    document.querySelectorAll('.time-slot').forEach(slot => {
+                      slot.classList.remove('selected');
+                    });
+                    element.classList.add('selected');
+                    element.querySelector('input[type="radio"]').checked = true;
+                  }
+
+                  // Event listeners
+                  document.getElementById('dateSelect').addEventListener('change', updateAvailableTimes);
+                  document.querySelectorAll('input[name="operatorId"]').forEach(input => {
+                    input.addEventListener('change', updateAvailableTimes);
+                  });
+                  document.querySelectorAll('input[name="serviceId"]').forEach(input => {
+                    input.addEventListener('change', updateAvailableTimes);
+                  });
+                  </script>
+</body>
+</html>
