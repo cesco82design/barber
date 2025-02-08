@@ -13,20 +13,26 @@
         <div class="admin-content">
             <h2>Prenotazioni Recenti</h2>
 
-                        <div class="filters">
-                            <input type="date" id="filterDate">
-                            <% if (operators && operators.length) { %>
-                                <select id="filterOperator">
-                                    <option value="">Tutti gli operatori</option>
-                                    <% operators.forEach(operator => { %>
-                                        <option value="<%= operator.id %>"><%= operator.name %></option>
-                                    <% }); %>
-                                </select>
-                            <% } else { %>
-                                <p>Nessun operatore disponibile</p>
-                            <% } %>
-                            <button class="btn" onclick="applyFilters()">Filtra</button>
-                        </div>
+            <div class="filters">
+                <input type="date" id="filterDate">
+
+                <% if (typeof operators !== 'undefined') { %>
+                    <% if (operators.length > 0) { %>
+                        <select id="filterOperator">
+                            <option value="">Tutti gli operatori</option>
+                            <% operators.forEach(operator => { %>
+                                <option value="<%= operator.id %>"><%= operator.name %></option>
+                            <% }); %>
+                        </select>
+                    <% } else { %>
+                        <p>Nessun operatore registrato</p>
+                    <% } %>
+                <% else { %>
+                    <p class="error">Errore nel caricamento degli operatori</p>
+                <% } %>
+
+                <button class="btn" onclick="applyFilters()">Filtra</button>
+            </div>
 
             <div class="appointments-list">
                 <% appointments.forEach(appointment => { %>

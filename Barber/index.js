@@ -450,9 +450,15 @@ app.get('/success', isAuthenticated, async (req, res) => {
     res.redirect('/book');
   }
 });
+// Modifica questa route
 app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
+  req.logout((err) => {
+    if(err) return next(err);
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid');
+      res.redirect('/');
+    });
+  });
 });
 
 // API
