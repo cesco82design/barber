@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 const path = require('path');  // Aggiungi con gli altri require
 const LocalStrategy = require('passport-local').Strategy;
-const port = process.env.PORT || 3000; // Usa la porta di Render o 3000 in locale
+const port = process.env.PORT || 10000; // Usa la porta di Render o 3000 in locale
 app.listen(port, () => {
   console.log(`Server attivo su porta ${port}`);
 });
