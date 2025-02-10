@@ -12,7 +12,10 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "connect-pg-simple": "^9.0.0",
+    "pg": "^8.11.3",
+    "express-session": "^1.17.3",
   },
   "scripts": {
     "start": "node index.js",
