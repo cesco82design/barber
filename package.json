@@ -13,9 +13,5 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "sqlite3": "^5.1.7"
-  },
-  "scripts": {
-    "start": "node index.js", // Comando per avviare l'app
-    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
