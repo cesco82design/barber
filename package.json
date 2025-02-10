@@ -15,7 +15,7 @@
     "sqlite3": "^5.1.7"
   },
   "scripts": {
-    "start": "node index.js", // Comando per avviare l'app
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  }
 }
