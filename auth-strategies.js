@@ -11,11 +11,20 @@ passport.use(new GoogleStrategy({
   callbackURL: process.env.GOOGLE_CALLBACK_URL
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    const existingUser = await db.findUserByGoogleId(profile.id);
+    // Cerca utente esistente
+    const existingUser = await db.getSingle(
+      'SELECT * FROM users WHERE googleId = $1', 
+      [profile.id]
+    );
     
     if (existingUser) return done(null, existingUser);
     
-    const newUser = await db.createUser(null, null, profile.id);
+    // Crea nuovo utente
+    const newUser = await db.query(
+      'INSERT INTO users (googleId) VALUES ($1) RETURNING *',
+      [profile.id]
+    );
+    
     done(null, newUser.rows[0]);
   } catch (err) {
     done(err);
