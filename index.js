@@ -65,11 +65,25 @@ db.serialize(() => {
   
 });
 
-// Configurazione Passport
+/* Configurazione Passport
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
+}));*/
+app.use(session({
+  /*secret: process.env.SESSION_SECRET || 'fallback-secret-per-sviluppo', // <-- Aggiungi questa riga
+  resave: false,
+  saveUninitialized: false,*/
+  secret: process.env.SESSION_SECRET,
+  store: new SQLiteStore({
+    dir: '/tmp', // Cartella scrivibile
+    db: 'sessions.db'
+  }),
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 1000 * 60 * 60 * 24 // 1 giorno
+  }
 }));
 
 passport.use(new GoogleStrategy({
