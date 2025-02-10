@@ -36,6 +36,66 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Sostituisci la parte di creazione tabelle con:
+async function initializeDatabase() {
+  try {
+    await db.pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE,
+        googleId VARCHAR(255) UNIQUE,
+        password VARCHAR(255),
+        isAdmin BOOLEAN DEFAULT FALSE
+      );
+      
+      CREATE TABLE IF NOT EXISTS operators (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) UNIQUE
+      );
+
+      CREATE TABLE IF NOT EXISTS services (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) UNIQUE,
+        duration INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS appointments (
+        id SERIAL PRIMARY KEY,
+        userId INTEGER REFERENCES users(id),
+        operatorId INTEGER REFERENCES operators(id),
+        serviceId INTEGER REFERENCES services(id),
+        startTime TIMESTAMP,
+        endTime TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS password_resets (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) NOT NULL,
+        token VARCHAR(255) NOT NULL,
+        expires TIMESTAMP NOT NULL
+      );
+
+      INSERT INTO operators (name)
+      VALUES ('Andrea'), ('Giuseppe')
+      ON CONFLICT (name) DO NOTHING;
+
+      INSERT INTO services (name, duration)
+      VALUES 
+        ('Taglio barba', 15),
+        ('Taglio capelli', 25),
+        ('Taglio completo', 40)
+      ON CONFLICT (name) DO NOTHING;
+    `);
+    console.log('Tabelle create con successo');
+  } catch (err) {
+    console.error('Errore creazione tabelle:', err);
+    process.exit(1);
+  }
+}
+
+// Chiama la funzione all'avvio
+initializeDatabase();
+
 // Middleware per gestire gli errori
 app.use((err, req, res, next) => {
   console.error(err.stack);
