@@ -4,19 +4,19 @@
     BarberApp
   </a>
 
-  <% if (user) { %>
-    <div class="nav-links">
-      <% if (user.isAdmin) { %>
-        <a href="/admin" class="btn btn-admin">
-          <i class="fas fa-lock"></i> Admin
+  <% if (user && user.isAdmin) { %>
+      <div class="nav-links">
+        <% if (user.isAdmin) { %>
+          <a href="/admin" class="btn btn-admin">
+            <i class="fas fa-lock"></i> <span>Admin</span>
+          </a>
+        <% } %>
+        <a href="/book" class="btn">
+          <i class="fas fa-calendar-plus"></i> <span>Prenota</span>
         </a>
-      <% } %>
-      <a href="/book" class="btn">
-        <i class="fas fa-calendar-plus"></i> Prenota
-      </a>
-      <a href="/logout" class="btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </a>
-    </div>
-  <% } %>
+        <a href="/logout" class="btn">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+      </div>
+    <% } %>
 </header>

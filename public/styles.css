@@ -21,7 +21,10 @@ body {
   margin: 0 auto;
   padding: 2rem;
 }
-
+/* COMMON */
+.text-center {
+  text-align:center
+}
 /* Header */
 .navbar {
   background: var(--primary-color);
@@ -42,7 +45,19 @@ body {
   width: 40px;
   margin-right: 10px;
 }
-
+.nav-links {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 768px) {
+    .nav-links span {
+        display:none;
+    }
+}
 /* Card */
 .booking-card {
   background: white;
@@ -70,12 +85,20 @@ body {
 }
 
 input, select {
-  width: 100%;
+  width: 90%;
   padding: 12px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s ease;
+}
+@media (max-width: 768px) {
+    form .btn {
+        display: block; /* Per forzare l'occupazione dell'intera riga */
+        width: 80%; /* Occupa l'80% della larghezza disponibile */
+        margin: 10px auto; /* Centra l'elemento orizzontalmente */
+        text-align: center; /* Centra il testo all'interno del bottone */
+    }
 }
 
 input:focus, select:focus {
@@ -96,6 +119,15 @@ input:focus, select:focus {
   display: inline-flex;
   align-items: center;
 }
+@media (max-width: 768px) {
+    .auth-links .btn {
+        display: block; /* Per forzare l'occupazione dell'intera riga */
+        width: 80%; /* Occupa l'80% della larghezza disponibile */
+        margin: 10px auto; /* Centra l'elemento orizzontalmente */
+        text-align: center; /* Centra il testo all'interno del bottone */
+    }
+}
+
 
 .btn:hover {
   background: #FF5252;
@@ -222,7 +254,9 @@ input:focus, select:focus {
   color: var(--secondary-color);
   font-weight: bold;
 }
-
+.success-card .checkmark {
+  background: var(--accent-color);
+}
 /* Griglia operatori */
 .operator-grid {
   display: grid;

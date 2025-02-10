@@ -79,56 +79,20 @@
 
     <script>
         async function applyFilters() {
-          try {
-            const date = document.getElementById('filterDate').value;
-            const operator = document.getElementById('filterOperator').value;
+          const date = document.getElementById('filterDate').value;
+          const operator = document.getElementById('filterOperator').value;
 
+          try {
             const response = await fetch(`/admin/filter?date=${date}&operator=${operator}`);
             const appointments = await response.json();
 
-            const appointmentsContainer = document.querySelector('.appointments-list');
-            appointmentsContainer.innerHTML = '';
+            // Ottieni la lista aggiornata degli operatori
+            const operatorsResponse = await fetch('/api/operators');
+            const operators = await operatorsResponse.json();
 
-            if (appointments.length === 0) {
-              appointmentsContainer.innerHTML = '<p class="no-data">Nessun appuntamento trovato</p>';
-              return;
-            }
-
-            appointments.forEach(app => {
-              const appointmentDiv = document.createElement('div');
-              appointmentDiv.className = 'appointment-card';
-              appointmentDiv.innerHTML = `
-                <div class="appointment-info">
-                  <div class="info-item">
-                    <span class="label">Cliente:</span>
-                    <span>${app.user_email}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Operatore:</span>
-                    <span>${app.operator_name}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Servizio:</span>
-                    <span>${app.service_name}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Data/Ora:</span>
-                    <span>${new Date(app.startTime).toLocaleString('it-IT')}</span>
-                  </div>
-                </div>
-                <form action="/admin/delete/${app.id}" method="POST">
-                  <button type="submit" class="btn btn-danger">
-                    <i class="fas fa-trash"></i> Elimina
-                  </button>
-                </form>
-              `;
-              appointmentsContainer.appendChild(appointmentDiv);
-            });
-
+            updateUI(appointments, operators);
           } catch (error) {
-            console.error('Errore nel filtro:', error);
-            document.querySelector('.appointments-list').innerHTML = 
-              '<p class="error">Errore nel caricamento degli appuntamenti</p>';
+            console.error('Filter error:', error);
           }
         }
 
@@ -138,7 +102,24 @@
           container.innerHTML = appointments.map(app => `
             <div class="appointment-card">
               <p>appuntamenti</p>
-              
+              <div class="appointment-info">
+                  <div class="info-item">
+                      <span class="label">Cliente:</span>
+                      <span><%= appointment.user_email %></span>
+                  </div>
+                  <div class="info-item">
+                      <span class="label">Operatore:</span>
+                      <span><%= appointment.operator_name %></span>
+                  </div>
+                  <div class="info-item">
+                      <span class="label">Servizio:</span>
+                      <span><%= appointment.service_name %></span>
+                  </div>
+                  <div class="info-item">
+                      <span class="label">Data/Ora:</span>
+                      <span><%= formatDate(appointment.startTime) %></span>
+                  </div>
+              </div>
             </div>
           `).join('');
 

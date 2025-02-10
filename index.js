@@ -99,23 +99,34 @@ passport.deserializeUser((id, done) => {
 
 // Configurazione app
 app.use(express.static('public'));
+app.set('views', path.join(__dirname, 'views'));  // Aggiungi in cima al file
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Middleware per gestire gli errori
+app.use((err, req, res, next) => {
+    res.status(err.status || 500);
+    res.render('error', { message: err.message, error: err });
+});
+
 
 // Middleware di autenticazione
 const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) return next();
   res.redirect('/login');
 };
+
 const isAdmin = (req, res, next) => {
   if (req.isAuthenticated() && req.user.isAdmin === 1) {
     return next();
   }
-  res.status(403).render('error', { message: 'Accesso riservato agli amministratori' });
+  res.status(403).render('error', { 
+    message: 'Accesso consentito solo agli amministratori' 
+  });
 };
-app.locals.formatDate = (dateString) => {
+/*app.locals.formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleString('it-IT', {
     timeZone: 'Europe/Rome',
@@ -126,6 +137,17 @@ app.locals.formatDate = (dateString) => {
     hour: '2-digit',
     minute: '2-digit'
   });
+};*/
+app.locals.formatDate = (dateString) => {
+  const options = { 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Rome'
+  };
+  return new Date(dateString).toLocaleString('it-IT', options);
 };
 // Rotte
 app.get('/', (req, res) => res.render('home', { user: req.user }));
@@ -147,10 +169,63 @@ app.post('/login', (req, res, next) => {
       return res.redirect('/book');
     });
   })(req, res, next);
+});/*
+app.post('/login', async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+        // Simula un errore se la login fallisce
+        if (email !== 'admin@example.com' || password !== 'password123') {
+            throw new Error('Credenziali non valide!');
+        }
+        //res.send('Login effettuato con successo!');
+      res.redirect('/admin');
+    } catch (err) {
+        next(err); // Passa l'errore al middleware
+    }
 });
-app.set('views', path.join(__dirname, 'views'));  // Aggiungi in cima al file
+*/
+
+
 
 // Dashboard Admin
+/*app.get('/admin', isAdmin, async (req, res) => {
+  try {
+    /*const [appointments, operators] = await Promise.all([
+      new Promise((resolve, reject) => {
+        db.all(`
+          SELECT a.*, u.email, o.name as operator_name, s.name as service_name 
+          FROM appointments a
+          JOIN users u ON a.userId = u.id
+          JOIN operators o ON a.operatorId = o.id
+          JOIN services s ON a.serviceId = s.id
+          ORDER BY a.startTime DESC
+        `, (err, rows) => err ? reject(err) : resolve(rows))
+      }),
+      new Promise((resolve, reject) => {
+        db.all('SELECT * FROM operators', (err, rows) => err ? reject(err) : resolve(rows))
+      })
+    ]);* /
+    const appointments = [
+      { id: 1, user_email: 'user@example.com', operator_name: 'Marco', service_name: 'Taglio', startTime: '2025-02-09T10:00:00' },
+      { id: 2, user_email: 'user2@example.com', operator_name: 'Luca', service_name: 'Shampoo', startTime: '2025-02-09T12:00:00' }
+    ];
+    const operators = [
+      { id: 1, name: 'Marco' },
+      { id: 2, name: 'Luca' }
+    ];
+/*
+    res.render('admin', {
+        user: req.user,
+        appointments: appointmentsData,
+        operators: operatorsData, // Deve essere definito
+        formatDate: yourFormatFunction
+    });* /
+    res.render('admin', { appointments, operators });
+  } catch (error) {
+    console.error('Admin dashboard error:', error);
+    res.status(500).render('error', { message: 'Errore nel caricamento dei dati' });
+  }
+});* /
 app.get('/admin', isAdmin, async (req, res) => {
   try {
     const [appointments, operators] = await Promise.all([
@@ -170,9 +245,38 @@ app.get('/admin', isAdmin, async (req, res) => {
     ]);
 
     res.render('admin', {
-      user: req.user,
+      user: req.user, // Aggiungi questo
       appointments,
-      operators, // Aggiungi questo
+      operators,
+      formatDate: app.locals.formatDate // Assicurati che questa funzione esista
+    });
+  } catch (error) {
+    console.error('Admin dashboard error:', error);
+    res.status(500).render('error', { message: 'Errore nel caricamento dei dati' });
+  }
+});*/
+app.get('/admin', isAdmin, async (req, res) => {
+  try {
+    const [appointments, operators] = await Promise.all([
+      new Promise((resolve, reject) => {
+        db.all(`
+          SELECT a.*, u.email, o.name as operator_name, s.name as service_name 
+          FROM appointments a
+          JOIN users u ON a.userId = u.id
+          JOIN operators o ON a.operatorId = o.id
+          JOIN services s ON a.serviceId = s.id
+          ORDER BY a.startTime DESC
+        `, (err, rows) => err ? reject(err) : resolve(rows))
+      }),
+      new Promise((resolve, reject) => {
+        db.all('SELECT * FROM operators', (err, rows) => err ? reject(err) : resolve(rows))
+      })
+    ]);
+
+    res.render('admin', {
+      user: req.user, // Questo è fondamentale
+      appointments,
+      operators,
       formatDate: app.locals.formatDate
     });
 
@@ -412,10 +516,21 @@ app.get('/book', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/book', isAuthenticated, async (req, res) => {
+/*app.post('/book', isAuthenticated, async (req, res) => {
   const { operatorId, serviceId, dateTime } = req.body;
   const service = await getService(serviceId);
   startTime.setMinutes(startTime.getMinutes() - startTime.getTimezoneOffset());
+  const endTime = new Date(startTime.getTime() + service.duration * 60000);
+
+  db.run(`INSERT INTO appointments (userId, operatorId, serviceId, startTime, endTime) VALUES (?, ?, ?, ?, ?)`,
+          [req.user.id, operatorId, serviceId, startTime.toISOString(), endTime.toISOString()],
+          (err) => err ? res.redirect('/book') : res.redirect('/success'));
+});
+*/
+app.post('/book', isAuthenticated, async (req, res) => {
+  const { operatorId, serviceId, dateTime } = req.body;
+  const service = await getService(serviceId);
+  const startTime = new Date(dateTime);
   const endTime = new Date(startTime.getTime() + service.duration * 60000);
 
   db.run(`INSERT INTO appointments (userId, operatorId, serviceId, startTime, endTime)
@@ -423,7 +538,6 @@ app.post('/book', isAuthenticated, async (req, res) => {
           [req.user.id, operatorId, serviceId, startTime.toISOString(), endTime.toISOString()],
           (err) => err ? res.redirect('/book') : res.redirect('/success'));
 });
-
 // Modifica la route /success
 app.get('/success', isAuthenticated, async (req, res) => {
   try {
@@ -482,7 +596,7 @@ async function calculateAvailableSlots(operatorId, date, duration) {
 
   while (true) {
     const endTime = new Date(currentTime.getTime() + duration * 60000);
-    if (endTime.getHours() >= 19 || (endTime.getHours() === 19 && endTime.getMinutes() > 0)) break;
+    if (endTime.getHours() >= 19 || (endTime.getHours() === 18 && endTime.getMinutes() > 0)) break;
 
     const isAvailable = appointments.every(app => {
       const appStart = new Date(app.startTime);

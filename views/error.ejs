@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Errore</title>
+    <%- include('head') %> 
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        h1 { color: red; }
+        p { font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Si è verificato un errore</h1>
+    <p><%= message %></p>
+    <p><%= error.status %> - <%= error.stack %> </p>
+    <a href="/">Torna alla home</a>
+</body>
+</html>
